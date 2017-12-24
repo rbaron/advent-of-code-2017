@@ -101,9 +101,6 @@ runInstrs2 (stateA, stateB) (qA, qB) (ipA, ipB) p instrs counter =
   if ipA < 0 || ipA > (fromIntegral $ Map.size instrs) || ipB < 0 || ipB > (fromIntegral $ Map.size instrs)
   then counter
   else let ip = if p == 0 then ipA else ipB
-           -- !b = trace("State B: " ++ show stateB ++ " P " ++ show p ++ " qB" ++ show qB ++ show (instrs Map.! ipA)) 1
-           -- !b = trace("p: " ++ show p ++ " instr " ++ show (instrs Map.! ipA)) 1
-           -- !b = trace("p: " ++ show p ) 1
         in case instrs Map.! ip of
           Instr2 op source -> case op of
             "snd" -> if p == 0
@@ -158,12 +155,6 @@ runInstrs2 (stateA, stateB) (qA, qB) (ipA, ipB) p instrs counter =
                              instrs
                              counter
 
-            --"rcv" -> let x = lookupVal source state
-            --             r = lookupRegister source
-            --          in if x > 0
-            --             then (Map.insert r lastPlayedFreq state, instructionPointer + 1, lastPlayedFreq, True)
-            --             else (state, instructionPointer + 1, lastPlayedFreq, False)
-          --otherwise -> counter
           Instr3 op dest source -> case op of
             "set" -> if p == 0
                      then runInstrs2
@@ -240,39 +231,9 @@ runInstrs2 (stateA, stateB) (qA, qB) (ipA, ipB) p instrs counter =
                             p
                             instrs
                             counter
-            --otherwise -> counter
---    Instr3 op dest source -> case op of
---      "set" -> (Map.insert (lookupRegister dest) (lookupVal source state) state,
---                instructionPointer + 1,
---                lastPlayedFreq,
---                False)
---      "add" -> let oldVal = lookupVal dest state
---                   inc    = lookupVal source state
---                in (Map.insert (lookupRegister dest) (oldVal + inc) state,
---                    instructionPointer + 1,
---                    lastPlayedFreq,
---                    False)
---      "mul" -> let oldVal = lookupVal dest state
---                   factor = lookupVal source state
---                in (Map.insert (lookupRegister dest) (oldVal * factor) state,
---                    instructionPointer + 1,
---                    lastPlayedFreq,
---                    False)
---      "mod" -> let oldVal = lookupVal dest state
---                   factor = lookupVal source state
---                in (Map.insert (lookupRegister dest) (oldVal `rem` factor) state,
---                    instructionPointer + 1,
---                    lastPlayedFreq,
---                    False)
---      "jgz" -> let x = lookupVal dest state
---                   y = lookupVal source state
---                in if x > 0
---                   then (state, instructionPointer + y, lastPlayedFreq, False)
---                   else (state, instructionPointer + 1, lastPlayedFreq, False)
 
 main = do
   input <- readFile "input.txt"
-  --input <- readFile "input-test-2.txt"
   let ls       = lines input
       instrLst = map parseInstr ls
       instrs   = Map.fromList $ zip [0..] instrLst
@@ -281,6 +242,6 @@ main = do
       -- Part #2
       res2 = runInstrs2 (Map.insert "p" 0 state, Map.insert "p" 1 state) ([], []) (0, 0) 0 instrs 0
     in do
-      --print $ runInstrs state instrs 0 0
+      print $ runInstrs state instrs 0 0
 
       print $ res2
